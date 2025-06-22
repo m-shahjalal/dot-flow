@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Drawing App</title>
+    <link rel="stylesheet" href="styles/dist.css" />
+    <link rel="icon" type="image/x-icon" href="/public/favicon.png" />
+  </head>
+  <body class="font-sans dotter absolute bg-gray-50 h-screen overflow-hidden">
+    <header
+      class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-white rounded-xl px-4 py-2 shadow-lg flex items-center gap-2 z-50"
+    ></header>
+
+    <div
+      id="playground"
+      class="absolute inset-0 w-screen h-screen bg-transparent"
+    ></div>
+
+    <div
+      class="border bg-gray-300 w-2/3 fixed right-0 h-screen z-50 transition-all"
+      style="max-width: 300px"
+      id="drawer"
+    >
+      <button
+        id="close-drawer"
+        class="border border-gray-500 p-1 rounded m-2 px-3 hover:bg-red-500 cursor-pointer transition-all hover:text-white"
+      >
+        X
+      </button>
+    </div>
+
+    <script type="module" src="./scripts/select-tools.js"></script>
+    <script type="module" src="./scripts/zoom-control.js"></script>
+    <script type="module" src="./scripts/block-drawer.js"></script>
+  </body>
+</html>
