@@ -1,22 +1,24 @@
 import {
   deleteAllConnectionsForNode,
   updateConnectedArrows,
-  updateDraggableItem,
-} from "./manage-arrow.js";
+} from "../arrows/manage.js";
+import {
+  createDrawerItemContent,
+  createPlaygroundItemContent,
+  drawerElements,
+} from "../utils.js";
 
-function makeDraggable(element) {
+// create individual item
+const makeDrawerItem = (element) => {
   let isDragging = false;
   let offsetX = 0;
   let offsetY = 0;
 
   element.addEventListener("mousedown", (e) => {
-    if (
-      e.target.classList.contains("item-delete") ||
-      e.target.classList.contains("connection-point")
-    ) {
-      return;
-    }
     e.preventDefault();
+    const list = ["item-delete", "connection-point"];
+    if (list.some((i) => e.target.classList.contains(i))) return;
+
     isDragging = true;
     offsetX = e.clientX - element.offsetLeft;
     offsetY = e.clientY - element.offsetTop;
@@ -28,6 +30,7 @@ function makeDraggable(element) {
     element.style.left = e.clientX - offsetX + "px";
     element.style.top = e.clientY - offsetY + "px";
 
+    // make dynamic position draw
     updateConnectedArrows(element);
   });
 
@@ -35,32 +38,12 @@ function makeDraggable(element) {
     isDragging = false;
     element.style.cursor = "grab";
   });
-}
 
-const elements = [
-  { id: 1, src: "/public/bot.png", head: "AI Agent" },
-  { id: 2, src: "/public/edit.png", head: "Edit the flow" },
-  { id: 3, src: "/public/mail.png", head: "Trigger mail" },
-  { id: 4, src: "/public/database.png", head: "Save to database" },
-];
+  document.getElementById("playground").appendChild(element);
+};
 
-const item = ({ src, head, sub }) => `
-<div class="flex flex-col items-center mb-8 cursor-pointer">
-  <div class="bg-gray-800 border-2 border-gray-600 rounded-lg p-6 w-64 relative">
-    <div class="flex items-center mb-2">
-      <div class="bg-gray-700 p-2 rounded mr-3 h-16 w-16">
-        <img src=${src} alt=${head} srcset="" />
-      </div>
-      <div>
-        <h3 class="text-white font-semibold text-lg">${head}</h3>
-        <p class="text-gray-400 text-sm">${sub || ""}</p>
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
-elements.map(({ src, head, sub, id }) => {
+// generate drawer item
+drawerElements.map(({ src, head, sub, id }) => {
   const elm = document.createElement("div");
   elm.onclick = (e) => {
     const draggable = document.createElement("div");
@@ -71,7 +54,12 @@ elements.map(({ src, head, sub, id }) => {
     draggable.style.top = "200px";
     draggable.style.left = "0px";
     draggable.style.cursor = "grab";
-    draggable.innerHTML = updateDraggableItem({ src, head, sub, nodeId });
+    draggable.innerHTML = createPlaygroundItemContent({
+      src,
+      head,
+      sub,
+      nodeId,
+    });
 
     const deleteBtn = draggable.querySelector(".item-delete");
     deleteBtn.addEventListener("click", (e) => {
@@ -80,13 +68,13 @@ elements.map(({ src, head, sub, id }) => {
       draggable.remove();
     });
 
-    makeDraggable(draggable);
-    document.getElementById("playground").appendChild(draggable);
+    makeDrawerItem(draggable);
   };
-  elm.innerHTML = item({ src, head, sub });
+  elm.innerHTML = createDrawerItemContent({ src, head, sub });
   document.getElementById("drawer").appendChild(elm);
 });
 
+// close the drawer
 document.getElementById("close-drawer").addEventListener("click", (e) => {
   document.getElementById("drawer").style.right = "-100%";
 });
