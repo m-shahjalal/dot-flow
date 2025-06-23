@@ -1,15 +1,25 @@
+import {
+  deleteAllConnectionsForNode,
+  updateConnectedArrows,
+  updateDraggableItem,
+} from "./manage-arrow.js";
+
 function makeDraggable(element) {
   let isDragging = false;
   let offsetX = 0;
   let offsetY = 0;
 
   element.addEventListener("mousedown", (e) => {
+    if (
+      e.target.classList.contains("item-delete") ||
+      e.target.classList.contains("connection-point")
+    ) {
+      return;
+    }
     e.preventDefault();
     isDragging = true;
-
     offsetX = e.clientX - element.offsetLeft;
     offsetY = e.clientY - element.offsetTop;
-
     element.style.cursor = "grabbing";
   });
 
@@ -17,6 +27,8 @@ function makeDraggable(element) {
     if (!isDragging) return;
     element.style.left = e.clientX - offsetX + "px";
     element.style.top = e.clientY - offsetY + "px";
+
+    updateConnectedArrows(element);
   });
 
   document.addEventListener("mouseup", () => {
@@ -41,46 +53,36 @@ const item = ({ src, head, sub }) => `
       </div>
       <div>
         <h3 class="text-white font-semibold text-lg">${head}</h3>
-        <p class="text-gray-400 text-sm">${sub}</p>
+        <p class="text-gray-400 text-sm">${sub || ""}</p>
       </div>
     </div>
   </div>
 </div>
 `;
 
-const druggableItem = ({ src, head, sub }) => `
-<div class="bg-gray-800 border-2 border-gray-600 rounded-lg p-6 w-64 relative">
-  <div class="flex items-center mb-2">
-    <div class="bg-gray-700 p-2 rounded mr-3 h-16 w-16">
-      <img src=${src} alt=${head} srcset="" />
-    </div>
-    <div>
-      <h3 class="text-white font-semibold text-lg">${head}</h3>
-      <p class="text-gray-400 text-sm">${sub}</p>
-    </div>
-  </div>
-</div>
-`;
-
-elements.map(({ src, head, id, sub }) => {
+elements.map(({ src, head, sub, id }) => {
   const elm = document.createElement("div");
-
   elm.onclick = (e) => {
     const draggable = document.createElement("div");
-    draggable.classList.add("draggable");
+    const nodeId = `node-${Date.now()}-${id}`;
 
+    draggable.classList.add("draggable");
     draggable.style.position = "absolute";
     draggable.style.top = "200px";
     draggable.style.left = "0px";
     draggable.style.cursor = "grab";
+    draggable.innerHTML = updateDraggableItem({ src, head, sub, nodeId });
 
-    draggable.innerHTML = druggableItem({ src, head, sub });
+    const deleteBtn = draggable.querySelector(".item-delete");
+    deleteBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      deleteAllConnectionsForNode(draggable);
+      draggable.remove();
+    });
 
     makeDraggable(draggable);
-
     document.getElementById("playground").appendChild(draggable);
   };
-
   elm.innerHTML = item({ src, head, sub });
   document.getElementById("drawer").appendChild(elm);
 });

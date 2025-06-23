@@ -15,7 +15,16 @@
     <div
       id="playground"
       class="absolute inset-0 w-screen h-screen bg-transparent"
-    ></div>
+    >
+      <svg
+        id="arrow-container"
+        xmlns="http://www.w3.org/2000/svg"
+        class="w-full h-full pointer-events-none"
+        style="z-index: 1; left: 0; top: 0; position: absolute"
+        with="100%"
+        height="100%"
+      ></svg>
+    </div>
 
     <div
       class="border bg-gray-300 w-2/3 fixed right-0 h-screen z-50 transition-all"
@@ -33,5 +42,7 @@
     <script type="module" src="./scripts/select-tools.js"></script>
     <script type="module" src="./scripts/zoom-control.js"></script>
     <script type="module" src="./scripts/block-drawer.js"></script>
+    <script type="module" src="./scripts/svg-initializer.js"></script>
+    <script type="module" src="./scripts/interactive-arrow.js"></script>
   </body>
 </html>

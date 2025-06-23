@@ -29,10 +29,10 @@ const zoomController = document.createElement("div");
 zoomController.innerHTML = `
 <div
     id="zoom"
-    class="mr-1 p-1 flex items-center gap-2 border-r border-r-gray-200"
+    class="mr-1 p-1 pr-2 flex items-center gap-2 border-r border-r-gray-200"
 >
     <button class="zoom-control" title="Zoom out">−</button>
-    <div class="text-xs text-gray-600 min-w-10 text-center zoom-level">
+    <div class="text-xs text-gray-600 w-fit text-center zoom-level">
     50%
     </div>
     <button class="zoom-control" title="Zoom in">+</button>
